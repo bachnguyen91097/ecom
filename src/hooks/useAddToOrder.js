@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { API_URL } from "./const";
 
-export default function useAddToCart(handleSuccess = () => {}) {
+export default function useAddToOrder(handleSuccess = () => {}) {
   return useMutation(
     async (productId) => {
       const response = await fetch(`${API_URL}/addToOrder`, {
@@ -14,8 +14,6 @@ export default function useAddToCart(handleSuccess = () => {}) {
       });
       return response.json();
     },
-    {
-      onSuccess: handleSuccess,
-    }
+    { onSuccess: handleSuccess }
   );
 }

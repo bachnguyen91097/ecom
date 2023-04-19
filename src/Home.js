@@ -1,18 +1,18 @@
 import React from "react";
 import { Row, Spin } from "antd";
 import Product from "./Product";
-import useProducts from "./hooks/useProducts";
+import useViewAllProducts from "./hooks/useViewAllProducts";
 
 function Home() {
-  const { data, isLoading } = useProducts();
+  const { data, isLoading } = useViewAllProducts();
   if (isLoading) {
     return <Spin />;
   }
   return (
     <div className="site-layout-content">
       <Row gutter={16}>
-        {data?.map((item) => (
-          <Product id={item.id} name={item.name} detail={item.detail} />
+        {data?.Data?.map((item) => (
+          <Product id={item.pid} name={item.product_name} detail={item.description} price={item.price} />
         ))}
       </Row>
     </div>

@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { Button, Spin } from "antd";
+import React, { useEffect, useState, createContext, useContext } from "react";
+import { Button, Spin, Statistic } from "antd";
 import CartItem from "./CartItem";
 import useCart from "./hooks/useCart";
 import useCheckout from "./hooks/useCheckout";
 import useClearCart from "./hooks/useClearCart";
+import useShowOrder from "./hooks/useShowOrder";
+
+const TotalPriceContext = createContext(null);
 
 function Cart() {
+  const [totalPrice, setTotalPrice] = useState({});
   const [successPurchase, setSuccessPurchase] = useState(false);
-  const { data, isLoading, isRefetching, refetch, remove } = useCart();
+  //const { data, isLoading, isRefetching, refetch, remove } = useCart();
+  const { data, isLoading, isRefetching, refetch, remove } = useShowOrder();
   const { mutate: checkout } = useCheckout(() => {
     refetch();
     setSuccessPurchase(true);
@@ -25,18 +30,24 @@ function Cart() {
     return <Spin />;
   }
   if (successPurchase) {
-    return <div>Purchased</div>;
+    return <div>Purchased Successfully!</div>;
   }
 
-  if (!data || !Object.keys(data).length) {
+  if (!data || !data?.Data?.length) {
     return <div>Empty cart</div>;
   }
+
+
   return (
+  <TotalPriceContext.Provider value={totalPrice}>
     <Spin spinning={isRefetching}>
       <div style={{ padding: 12 }}>
-        {Object.keys(data).map((e) => (
-          <CartItem name={data[e].name} quantity={data[e].quantity} id={e} />
-        ))}
+          {data?.Data?.map((item) => (
+            <CartItem id={item.pid} quantity={item.product_count} setTotalPrice={setTotalPrice}/>
+          ))}
+        <div style={{ padding: 12 }}>
+        <Statistic title="Total Price" value={Object.keys(totalPrice).map((k) => totalPrice[k] || 0).reduce((partialSum, a) => partialSum + a, 0)} />
+        </div>
         {Object.keys(data).length > 0 && (
           <Button onClick={clearCart} type="primary" danger>
             Clear cart
@@ -49,6 +60,7 @@ function Cart() {
         )}
       </div>
     </Spin>
+    </TotalPriceContext.Provider>
   );
 }
 

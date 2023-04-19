@@ -1,21 +1,19 @@
 import { useMutation } from "@tanstack/react-query";
 import { API_URL } from "./const";
 
-export default function useAddToCart(handleSuccess = () => {}) {
+export default function useDeleteFromOrder(handleSuccess = () => {}) {
   return useMutation(
-    async (productId) => {
-      const response = await fetch(`${API_URL}/addToOrder`, {
+    async ( productId ) => {
+      const response = await fetch(`${API_URL}/deleteFromOrder`, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        method: "POST",
+        method: "PUT",
         body: JSON.stringify({ productId }),
       });
       return response.json();
     },
-    {
-      onSuccess: handleSuccess,
-    }
+    { onSuccess: handleSuccess }
   );
 }
